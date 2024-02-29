@@ -1,18 +1,17 @@
 import { useState } from "react";
+import Questions from "./Questions";
 
 function App() {
   const colors = ["bg-red-300", "bg-orange-300", "bg-green-300", "bg-blue-300"];
-  const [isOpen, setIsOpen] = useState(false);
-  const [category, setCategory] = useState({});
-  const [questions, setQuestions] = useState([]);
-  const [questionIndex, setQuestionIndex] = useState("");
-  const [current, setCurrent] = useState("");
+  const [category, setCategory] = useState();
   const [newCategoryOpen, setNewCategoryOpen] = useState({
     isOpen: false,
     index: null,
   });
   const [newCategory, setNewCategory] = useState({ name: "" });
   const [categories, setCategories] = useState([]);
+  const [questionIndex, setQuestionIndex] = useState("");
+  const [questions, setQuestions] = useState([]);
 
   const valideNewCategory = (cat) => {
     if (cat.name != "" && cat.color != "") return true;
@@ -131,6 +130,8 @@ function App() {
               </div>
             ))}
         </div>
+        {
+          !!category &&  
         <div
           id="questions"
           className="h-3/4 md:h-full bg-gray-900 flex flex-grow gap-5 flex-wrap justify-center items-center relative p-24"
@@ -138,43 +139,9 @@ function App() {
           <p className="absolute top-0 left-0 m-5 p-5 text-white text-3xl">
             {category.name}/{questionIndex}
           </p>
-          <div
-            id="popup"
-            className={`z-10 w-3/4 h-3/4 ${
-              isOpen ? "flex" : "hidden"
-            } bg-black rounded-lg absolute justify-center items-center text-white text-5xl`}
-          >
-            {current}
-            <button
-              onClick={() => {
-                setIsOpen(!isOpen);
-                setQuestionIndex("");
-              }}
-              className="absolute p-5 bg-red-500 bottom-0 right-0 m-5 text-xl rounded-lg"
-            >
-              click
-            </button>
-          </div>
-          {questions.map((question, index) => (
-            <div
-              onClick={() => {
-                setCurrent(question.a);
-                setIsOpen(true);
-                setQuestionIndex("Q" + (index + 1));
-              }}
-              className="w-1/5 h-1/4 bg-gray-500 hover:bg-gray-600 rounded-lg flex  justify-center items-center font-bold text-4xl text-white"
-            >
-              Q{index + 1}
-            </div>
-          ))}
-          <div
-            className={`w-1/5 h-1/4 bg-gray-600 rounded-lg border-4 border-dashed  hover:scale-105 duration-150 cursor-pointer ${
-              category.length > 11 || category.length == 0 ? "hidden" : "flex"
-            }  justify-center items-center font-bold text-4xl text-white`}
-          >
-            +
-          </div>
+          <Questions setCategories={setCategories} categories={categories} category={category} setQuestionIndex={setQuestionIndex} setQuestions={setQuestions} questions={questions} />
         </div>
+          }
       </div>
     </>
   );
