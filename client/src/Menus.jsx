@@ -156,3 +156,23 @@ export function EditModeMenu({
     </>
   );
 }
+
+export function PlayModeMenu({ setMode }) {
+  return (
+    <>
+      <span className="p-5 m-5 uppercase absolute top-0 text-yellow-300  font-mono font-bold text-4xl">
+        lets play!
+      </span>
+
+      <button
+        className="flex justify-center items-center p-5 font-bold capitalize bg-yellow-500 rounded text-black absolute bottom-0 m-5"
+        onClick={() => {
+          setMode("menu");
+          setOpenCategory({});
+        }}
+      >
+        back to menu
+      </button>
+    </>
+  );
+}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MenuModeMenu, EditModeMenu } from "./Menus";
+import { MenuModeMenu, EditModeMenu, PlayModeMenu } from "./Menus";
 import { MenuModeBody, EditModeBody } from "./Bodies";
 
 function App() {
@@ -26,6 +26,7 @@ function App() {
               setOpenCategory={setOpenCategory}
             />
           )}
+          {mode == "play" && <PlayModeMenu setMode={setMode} />}
         </nav>
         <div
           id="body"

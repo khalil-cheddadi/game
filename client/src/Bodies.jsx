@@ -48,18 +48,35 @@ export function EditModeBody({
 
   function createQuestion(newQst) {
     const index = categories.indexOf(openCategory);
+    const newCategory = openCategory;
+    let newQuestions;
     if (openQuestion) {
       const qstIndex = openCategory.questions.indexOf(openQuestion);
+      newQuestions = [...openCategory.questions];
+      newQuestions[qstIndex] = newQst;
     } else {
-      const newQuestions = [...openCategory.questions, newQst];
-      const newCategory = openCategory;
-      newCategory.questions = newQuestions;
-      setOpenCategory(newCategory);
-      const newCategories = [...categories];
-      newCategories[index] = openCategory;
-      setCategories(newCategories);
-      closeCreateModal();
+      newQuestions = [...openCategory.questions, newQst];
     }
+    newCategory.questions = newQuestions;
+    setOpenCategory(newCategory);
+    const newCategories = [...categories];
+    newCategories[index] = openCategory;
+    setCategories(newCategories);
+    closeCreateModal();
+  }
+
+  function deleteQuestion() {
+    const index = categories.indexOf(openCategory);
+    const newCategory = openCategory;
+    const qstIndex = openCategory.questions.indexOf(openQuestion);
+    const newQuestions = [...openCategory.questions];
+    newQuestions.splice(qstIndex, 1);
+    newCategory.questions = newQuestions;
+    setOpenCategory(newCategory);
+    const newCategories = [...categories];
+    newCategories[index] = openCategory;
+    setCategories(newCategories);
+    closeCreateModal();
   }
 
   return (
@@ -85,7 +102,7 @@ export function EditModeBody({
             </div>
           ))}
           {openCategory.questions.length < 12 && (
-            <div
+            <button
               onClick={() => {
                 setOpenQuestion(null);
                 openCreateModal();
@@ -93,7 +110,7 @@ export function EditModeBody({
               className="w-1/5 h-1/5 bg-gray-600 rounded-lg border-4 border-dashed  hover:scale-105 duration-150 cursor-pointer flex justify-center items-center font-bold text-4xl text-white"
             >
               +
-            </div>
+            </button>
           )}
           <div className="absolute bottom-0 right-0 m-5 flex gap-5">
             <button
@@ -114,6 +131,7 @@ export function EditModeBody({
             closeCreateModal={closeCreateModal}
             openQuestion={openQuestion}
             createQuestion={createQuestion}
+            deleteQuestion={deleteQuestion}
           />
         </>
       ) : (
@@ -209,6 +227,7 @@ function CreateModal({
   closeCreateModal,
   createQuestion,
   openQuestion,
+  deleteQuestion,
 }) {
   const [newQst, setNewQst] = useState(null);
   useEffect(() => {
@@ -231,7 +250,7 @@ function CreateModal({
             <div className="fixed inset-0 bg-black/25" />
           </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
+          <div className="fixed inset-0 overflow-y-aut">
             <div className="flex min-h-full items-center justify-center p-4 text-center">
               <Transition.Child
                 as={Fragment}
@@ -242,18 +261,18 @@ function CreateModal({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-2xl h-[100vh] max-h-[85vh] transform overflow-hidden rounded-2xl bg-slate-900 p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-2xl h-[100vh] max-h-min transform overflow-hidden rounded-2xl bg-slate-900 p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg leading-6 text-white font-bold"
                   >
                     Create/Edit Question
                   </Dialog.Title>
-                  <div className="text-2xl [&>*]:mb-2 text-black">
-                    <div>
-                      <p className="text-white">Name</p>
+                  <div className="text-2xl [&>*]:mb-2 text-black  flex flex-col gap-3 justify-center items-center">
+                    <div className="text-white flex flex-col gap-1">
+                      <p>Name</p>
                       <input
-                        className="outline-green"
+                        className="bg-transparent max-w-min text-center outline-none rounded border-2 border-black p-2"
                         value={newQst?.name}
                         onChange={(e) =>
                           setNewQst((prev) => ({
@@ -265,8 +284,8 @@ function CreateModal({
                         placeholder="name"
                       />
                     </div>
-                    <div>
-                      <p className="text-white">Question</p>
+                    <div className="text-white  flex flex-col gap-1">
+                      <p>Question</p>
                       <textarea
                         value={newQst?.question}
                         onChange={(e) =>
@@ -275,13 +294,13 @@ function CreateModal({
                             question: e.target.value,
                           }))
                         }
-                        className="resize-none"
+                        className="resize-none bg-transparent max-w-min text-center outline-none rounded border-2 border-black p-2"
                         type="text"
                         placeholder="question"
                       />
                     </div>
-                    <div>
-                      <p className="text-white">Answer</p>
+                    <div className="text-white  flex flex-col gap-1">
+                      <p>Answer</p>
                       <textarea
                         value={newQst?.answer}
                         onChange={(e) =>
@@ -290,15 +309,16 @@ function CreateModal({
                             answer: e.target.value,
                           }))
                         }
-                        className="resize-none"
+                        className="resize-none bg-transparent max-w-min text-center outline-none rounded border-2 border-black p-2"
                         type="text"
                         placeholder="answer"
                       />
                     </div>
-                    <div>
-                      <p className="text-white">Timer</p>
+                    <div className="text-white  flex flex-col gap-1">
+                      <p>Timer</p>
                       <input
                         value={newQst?.timer}
+                        className="bg-transparent text-center outline-none rounded border-2 border-black p-2"
                         onChange={(e) =>
                           setNewQst((prev) => ({
                             ...prev,
@@ -306,7 +326,7 @@ function CreateModal({
                           }))
                         }
                         type="number"
-                        placeholder="30"
+                        defaultValue={30}
                       />
                     </div>
                   </div>
@@ -314,7 +334,7 @@ function CreateModal({
                     {openQuestion && (
                       <button
                         className="inline-flex justify-center rounded-md border border-transparent bg-red-700 px-4 py-2 text-sm font-medium text-white hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-                        onClick={closeCreateModal}
+                        onClick={() => deleteQuestion()}
                       >
                         delete
                       </button>
